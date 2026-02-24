@@ -12,10 +12,11 @@ public class imagini {
         
         }
 
-        int margine=n/4;
+        int margineV=n/4;
+        int margineO=n/6;
 
-        for(int i=margine;i<n-margine;i++)
-            for(int j=margine;j<n-margine;j++)
+        for(int i=margineV;i<n-margineV;i++)
+            for(int j=margineO;j<n-margineO;j++)
         {
 
             img[i][j]=0;
