@@ -8,14 +8,14 @@ Resource.java: Reprezinta o resursa individuala. Clasa implementeaza interfata S
 Catalog.java: Actioneaza ca o colectie centrala de resurse. Elementele sunt stocate intern utilizand structura de date HashMap<String, Resource>, permitand astfel o cautare si o accesare foarte rapida  a unei resurse utilizand direct ID-ul ei. Are, de asemenea, metode ajutatoare tipice de adaugare si regasire.
 
 ### 2. Pachetul repository
-CatalogRepository.java: Acest pachet are ca unica responsabilitate implementarea persistentei de durata a catalogului.
+CatalogRepository.java: Acest pachet are ca responsabilitate implementarea persistentei de durata a catalogului.
 
 Metoda save instantieaza un ObjectOutputStream prin care serializeaza obiectul intreg si il stocheaza direct ca o suma de bytes in partitia locala la calea oferita.
 
 Metoda load este reversul. Se bazeaza pe ObjectInputStream pentru a prelua fisierul, a-l deserializa si a returna complet instanta completa a catalogului de date cu resursele setate anterior.
 
 ### 3. Pachetul commands
-Aceasta sectiune implementeaza indirect o arhitectura de dezvoltare bazata pe Command Pattern. Logica operatiilor pe care utilizatorul le poate executa se gaseste exclusiv aici, favorizand scalabilitatea.
+Aceasta sectiune implementeaza o arhitectura bazata pe Command Pattern. Logica operatiilor pe care utilizatorul le poate executa se gaseste aici.
 
 AddCommand.java: Obiectul retine referinta la Catalog si resursa. Odata executata, apeleaza metoda interna a structurii HashMap pentru a salva obiectul in catalog.
 
