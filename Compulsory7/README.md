@@ -1,78 +1,155 @@
+## 1. Arhitectura si Structura Proiectului
 
-
-
-## 1. Structura pe Pachete
-
-### 1.1 Punctul de Intrare: Lab7Application.java
-
-- SpringBootApplication indica framework-ului sa configureze automat infrastructura pe baza bibliotecilor si sa scaneze proiectul pentru a gasi si instantiа componentele programului.
-- Apelul SpringApplication.run initializeaza ApplicationContext-ul si activeaza serverul web care va asigura porturile si conexiunea prin retea.
-
-### 1.2 model: Film.java
-Acest pachet contine modelarea datelor .
-
-- Entity:Aceasta declara structural clasa Film ca fiind o entitate relationala ce va fi mapata izolat peste un tabel in baza de date.
-
-
-Identificatorul Unic (id):
-- Id: Semnaleaza cu strictete ca atributul id reprezinta cheia primara a entitatii.
-- GeneratedValue: Deleaga direct bazei de date logica de auto-incrementare indexata a cheii primare (1, 2, 3...) aplicata la fiecare inserare.
-
-Campurile declarate (title, genre si score) sunt transformate implicit, creandu-se coloane SQL.
+controller: gestioneaza request-urile HTTP si expune API-ul REST  
+service: contine logica aplicatiei si proceseaza datele  
+repository: comunica direct cu baza de date folosind JPA  
+model: defineste structura entitatilor (tabelele din baza de date)  
+exception: gestioneaza erorile global  
 
 ---
 
-### 1.3 Accesul la Date (repository): FilmRepository.java
+## 2. Pachetul controller
 
-Acest strat elimina necesitatea scrierii SQL manual.
+FilmController.java:  
+Aceasta clasa expune endpoint-urile REST pentru operatii pe filme  
 
-- Extinde JpaRepository<Film, Long>
-- Spring Data JPA genereaza automat implementarea in runtime
+@RequestMapping("/movies") defineste ruta principala  
 
-Metode disponibile:
-- findAll()
-- findById()
-- save()
-- deleteById()
+Metoda getAll():  
+- foloseste @GetMapping  
+- returneaza lista tuturor filmelor  
+- apeleaza service.getAll()  
 
----
+Metoda addFilm():  
+- foloseste @PostMapping  
+- primeste obiect Film din request (@RequestBody)  
+- salveaza filmul in baza de date  
+- returneaza filmul salvat  
 
-### 1.4 service: FilmService.java
+Metoda updateFilm():  
+- foloseste @PutMapping("/{id}")  
+- primeste id din URL (@PathVariable)  
+- actualizeaza toate campurile filmului  
+- apeleaza service.updateFilm()  
 
-@Service marcheaza clasa ca bean Spring.
+Metoda updateScore():  
+- foloseste @PatchMapping("/{id}/score")  
+- actualizeaza doar scorul filmului  
+- primeste scorul prin @RequestParam  
+- apeleaza service.updateScore()  
 
-Dependency Injection se face prin constructor.
-
-Metode:
-- getAll()
-- addFilm(Film film)
-- updateFilm(Long id, Film updated)
-- updateScore(Long id, double score)
-- deleteFilm(Long id)
-
-Daca filmul nu este gasit, se arunca RuntimeException.
-
----
-
-### 1.5 Controller REST: FilmController.java
-
-@RestController expune REST API.
-
-@RequestMapping("/movies") defineste ruta principala.
-
-Endpoints:
-- GetMapping -> returneaza lista filmelor
-- PostMapping -> adauga film
-- PutMapping("/{id}") -> update complet
-- PatchMapping("/{id}/score") -> update partial
-- DeleteMapping("/{id}") -> stergere
-
-Raspunsurile sunt in format JSON.
+Metoda deleteFilm():  
+- foloseste @DeleteMapping("/{id}")  
+- sterge filmul dupa id  
+- apeleaza service.deleteFilm()  
 
 ---
 
-### 1.6 Exception Handling: GlobalExceptionHandler.java
+## 3. Pachetul service
 
-@RestControllerAdvice gestioneaza global exceptiile.
+FilmService.java:  
+Contine logica aplicatiei si face legatura intre controller si repository  
 
-@ExceptionHandler prinde erorile.
+Metoda getAll():  
+- returneaza toate filmele din baza de date  
+- foloseste repository.findAll()  
+
+Metoda addFilm():  
+- salveaza un film nou  
+- foloseste repository.save()  
+
+Metoda updateFilm():  
+- cauta filmul dupa id  
+- daca nu exista, arunca RuntimeException  
+- actualizeaza title, genre si score  
+- salveaza modificarile  
+
+Metoda updateScore():  
+- cauta filmul dupa id  
+- actualizeaza doar scorul  
+- salveaza modificarile  
+
+Metoda deleteFilm():  
+- sterge filmul dupa id  
+- foloseste repository.deleteById()  
+
+---
+
+## 4. Pachetul repository
+
+FilmRepository.java:  
+Extinde JpaRepository  
+
+- ofera automat operatii CRUD  
+- nu este nevoie de cod SQL manual  
+- metode disponibile: findAll, save, findById, deleteById  
+
+---
+
+## 5. Pachetul model
+
+Film.java:  
+Reprezinta tabela "films" din baza de date  
+
+@Entity marcheaza clasa ca entitate JPA  
+@Table(name = "movies") specifica numele tabelului  
+
+Atribute:  
+- id: cheia primara, generata automat  
+- title: titlul filmului  
+- genre: genul filmului  
+- score: scorul filmului  
+
+@GeneratedValue(strategy = GenerationType.IDENTITY) genereaza automat id-ul  
+
+Contine:  
+- constructor fara parametri  
+- constructor cu parametri  
+- metode getter si setter  
+
+---
+
+## 6. Pachetul exception
+
+GlobalExceptionHandler.java:  
+
+Gestioneaza erorile la nivel global  
+
+@RestControllerAdvice intercepteaza exceptiile din aplicatie  
+
+Metoda handleRuntime():  
+- trateaza RuntimeException  
+- returneaza mesajul de eroare sub forma de JSON  
+- seteaza status HTTP 404 (NOT_FOUND)  
+
+---
+
+## 7. Clasa principala
+
+Lab7Application.java:  
+
+Este punctul de start al aplicatiei Spring Boot  
+
+@SpringBootApplication configureaza automat aplicatia  
+
+Metoda main():  
+- porneste aplicatia folosind SpringApplication.run()  
+- initializeaza toate componentele (controller, service, repository)  
+
+---
+
+## 8. Fluxul aplicatiei
+
+1. Clientul trimite request HTTP (GET, POST, PUT, PATCH, DELETE)  
+
+2. FilmController preia request-ul  
+
+3. Controller apeleaza metode din FilmService  
+
+4. Service proceseaza logica si apeleaza FilmRepository  
+
+5. Repository interactioneaza cu baza de date  
+
+6. Rezultatul este returnat inapoi catre client in format JSON  
+
+7. Daca apare o eroare, GlobalExceptionHandler returneaza mesajul corespunzator  
