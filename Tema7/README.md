@@ -15,7 +15,7 @@ Configureaza bean-uri pentru aplicatie
 
 ### Metoda restTemplate()  
 creeaza un obiect RestTemplate  
-foloseste HttpComponentsClientHttpRequestFactory pentru suport complet HTTP (inclusiv PATCH)  
+foloseste HttpComponentsClientHttpRequestFactory pentru suport complet HTTP 
 
 ---
 
