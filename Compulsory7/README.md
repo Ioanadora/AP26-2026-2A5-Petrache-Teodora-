@@ -1,24 +1,18 @@
 
-## 1. Arhitectura si Concepte Fundamentale
 
-1. Acces la Date : Gestioneaza datele si interogarile SQL catre sistemul bazei de date.
-2. Logica a Aplicatiei: Contine si prelucreaza regulile de functionare ale sistemului.
-3. Prezentare: Gestioneaza exclusiv cererile HTTP primite de la clienti si construieste raspunsurile.
 
----
+## 1. Structura pe Pachete
 
-## 2. Structura pe Pachete
-
-### 2.1 Punctul de Intrare: Lab7Application.java
+### 1.1 Punctul de Intrare: Lab7Application.java
 
 - SpringBootApplication indica framework-ului sa configureze automat infrastructura pe baza bibliotecilor si sa scaneze proiectul pentru a gasi si instantiа componentele programului.
 - Apelul SpringApplication.run initializeaza ApplicationContext-ul si activeaza serverul web care va asigura porturile si conexiunea prin retea.
 
-### 2.2 model: Film.java
+### 1.2 model: Film.java
 Acest pachet contine modelarea datelor .
 
 - Entity:Aceasta declara structural clasa Film ca fiind o entitate relationala ce va fi mapata izolat peste un tabel in baza de date.
-- Table(name = "films"): Suprascrie si forteaza ca denumirea tehnica a tabelului pre-generat sa fie fix films.
+
 
 Identificatorul Unic (id):
 - Id: Semnaleaza cu strictete ca atributul id reprezinta cheia primara a entitatii.
@@ -28,7 +22,7 @@ Campurile declarate (title, genre si score) sunt transformate implicit, creandu-
 
 ---
 
-### 2.3 Accesul la Date (repository): FilmRepository.java
+### 1.3 Accesul la Date (repository): FilmRepository.java
 
 Acest strat elimina necesitatea scrierii SQL manual.
 
@@ -43,7 +37,7 @@ Metode disponibile:
 
 ---
 
-### 2.4 service: FilmService.java
+### 1.4 service: FilmService.java
 
 @Service marcheaza clasa ca bean Spring.
 
@@ -60,7 +54,7 @@ Daca filmul nu este gasit, se arunca RuntimeException.
 
 ---
 
-### 2.5 Controller REST: FilmController.java
+### 1.5 Controller REST: FilmController.java
 
 @RestController expune REST API.
 
@@ -77,7 +71,7 @@ Raspunsurile sunt in format JSON.
 
 ---
 
-### 2.6 Exception Handling: GlobalExceptionHandler.java
+### 1.6 Exception Handling: GlobalExceptionHandler.java
 
 @RestControllerAdvice gestioneaza global exceptiile.
 
