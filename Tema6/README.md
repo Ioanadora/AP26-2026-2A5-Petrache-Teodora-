@@ -2,8 +2,8 @@
 
 ## 1. Arhitectura Sistemului 
 
-1. `config`: Gestioneaza infrastructura tehnica.
-2. `model`: Defineste structurile de date fundamentale ale aplicatiei.
+1. `config`: Se ocupa de partea tehnica.
+2. `model`: Defineste structurile de date ale aplicatiei.
 3. `dao`  Incapsuleaza logica si comunicare cu baze de date.
 4. `service`: Contine logica si integreaza datele obtinute pentru a indeplini sarcinile.
 
@@ -19,7 +19,7 @@ Acest modul este responsabil cu medierea comunicarii dintre aplicatia Java si si
 
 Responsabilitate: Initializarea si stocarea unui Connection Pool.
 
-Design Pattern implementat: Singleton. Constructorul clasei este declarat private (private DataSourceManager() {}). Acest lucru blocheaza instantierea clasei din exteriorul ei, garantand astfel existenta unei singure instante partajate, accesibila prin metoda statica getDataSource(). Setand in acest fel clasa, impiedicam supraaglomerarea blocarea bazei de date cu cereri multiple de conectare.
+Design Pattern implementat:Constructorul clasei este declarat private (private DataSourceManager() {}). Acest lucru blocheaza instantierea clasei din exteriorul ei, garantand astfel existenta unei singure instante partajate, accesibila prin metoda statica getDataSource(). Setand in acest fel clasa, impiedic supraaglomerarea blocarea bazei de date cu cereri multiple de conectare.
 
 Biblioteca HikariCP: Metoda getDataSource() configureaza un obiect de tip HikariConfig, apartinand bibliotecii HikariCP, un sistem performant de tip Connection Pool din Java.
 
@@ -52,8 +52,6 @@ DAO Pattern izoleaza restul aplicatiei de limbajul SQL.
 Metoda create(Entitate): insereaza date folosind PreparedStatement.
 
 PreparedStatement previne SQL Injection folosind parametri ?.
-
-Try-With-Resources: asigura inchiderea automata a conexiunilor si a resurselor.
 
 Metodele findById si findByName: interogheaza baza de date folosind ResultSet si returneaza obiecte.
 
