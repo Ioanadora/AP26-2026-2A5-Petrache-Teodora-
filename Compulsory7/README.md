@@ -16,32 +16,32 @@ Aceasta clasa expune endpoint-urile REST pentru operatii pe filme
 @RequestMapping("/movies") defineste ruta principala  
 
 Metoda getAll():  
-- foloseste @GetMapping  
-- returneaza lista tuturor filmelor  
-- apeleaza service.getAll()  
+ foloseste @GetMapping  
+ returneaza lista tuturor filmelor  
+ apeleaza service.getAll()  
 
 Metoda addFilm():  
-- foloseste @PostMapping  
-- primeste obiect Film din request (@RequestBody)  
-- salveaza filmul in baza de date  
-- returneaza filmul salvat  
+ foloseste @PostMapping  
+ primeste obiect Film din request (@RequestBody)  
+ salveaza filmul in baza de date  
+ returneaza filmul salvat  
 
 Metoda updateFilm():  
-- foloseste @PutMapping("/{id}")  
-- primeste id din URL (@PathVariable)  
-- actualizeaza toate campurile filmului  
-- apeleaza service.updateFilm()  
+ foloseste @PutMapping("/{id}")  
+ primeste id din URL (@PathVariable)  
+ actualizeaza toate campurile filmului  
+ apeleaza service.updateFilm()  
 
 Metoda updateScore():  
-- foloseste @PatchMapping("/{id}/score")  
-- actualizeaza doar scorul filmului  
-- primeste scorul prin @RequestParam  
-- apeleaza service.updateScore()  
+ foloseste @PatchMapping("/{id}/score")  
+ actualizeaza doar scorul filmului  
+ primeste scorul prin @RequestParam  
+ apeleaza service.updateScore()  
 
 Metoda deleteFilm():  
-- foloseste @DeleteMapping("/{id}")  
-- sterge filmul dupa id  
-- apeleaza service.deleteFilm()  
+ foloseste @DeleteMapping("/{id}")  
+ sterge filmul dupa id  
+ apeleaza service.deleteFilm()  
 
 ---
 
@@ -51,27 +51,27 @@ FilmService.java:
 Contine logica aplicatiei si face legatura intre controller si repository  
 
 Metoda getAll():  
-- returneaza toate filmele din baza de date  
-- foloseste repository.findAll()  
+ returneaza toate filmele din baza de date  
+ foloseste repository.findAll()  
 
 Metoda addFilm():  
-- salveaza un film nou  
-- foloseste repository.save()  
+ salveaza un film nou  
+ foloseste repository.save()  
 
 Metoda updateFilm():  
-- cauta filmul dupa id  
-- daca nu exista, arunca RuntimeException  
-- actualizeaza title, genre si score  
-- salveaza modificarile  
+ cauta filmul dupa id  
+ daca nu exista, arunca RuntimeException  
+ actualizeaza title, genre si score  
+ salveaza modificarile  
 
 Metoda updateScore():  
-- cauta filmul dupa id  
-- actualizeaza doar scorul  
-- salveaza modificarile  
+ cauta filmul dupa id  
+ actualizeaza doar scorul  
+ salveaza modificarile  
 
 Metoda deleteFilm():  
-- sterge filmul dupa id  
-- foloseste repository.deleteById()  
+ sterge filmul dupa id  
+ foloseste repository.deleteById()  
 
 ---
 
@@ -80,9 +80,9 @@ Metoda deleteFilm():
 FilmRepository.java:  
 Extinde JpaRepository  
 
-- ofera automat operatii CRUD  
-- nu este nevoie de cod SQL manual  
-- metode disponibile: findAll, save, findById, deleteById  
+ ofera automat operatii CRUD  
+ nu este nevoie de cod SQL manual  
+ metode disponibile: findAll, save, findById, deleteById  
 
 ---
 
@@ -95,17 +95,13 @@ Reprezinta tabela "films" din baza de date
 @Table(name = "movies") specifica numele tabelului  
 
 Atribute:  
-- id: cheia primara, generata automat  
-- title: titlul filmului  
-- genre: genul filmului  
-- score: scorul filmului  
+ id: cheia primara, generata automat  
+ title: titlul filmului  
+ genre: genul filmului  
+ score: scorul filmului  
 
 @GeneratedValue(strategy = GenerationType.IDENTITY) genereaza automat id-ul  
-
-Contine:  
-- constructor fara parametri  
-- constructor cu parametri  
-- metode getter si setter  
+ 
 
 ---
 
@@ -118,9 +114,9 @@ Gestioneaza erorile la nivel global
 @RestControllerAdvice intercepteaza exceptiile din aplicatie  
 
 Metoda handleRuntime():  
-- trateaza RuntimeException  
-- returneaza mesajul de eroare sub forma de JSON  
-- seteaza status HTTP 404 (NOT_FOUND)  
+ trateaza RuntimeException  
+ returneaza mesajul de eroare sub forma de JSON  
+ seteaza status HTTP 404 (NOT_FOUND)  
 
 ---
 
@@ -133,8 +129,8 @@ Este punctul de start al aplicatiei Spring Boot
 @SpringBootApplication configureaza automat aplicatia  
 
 Metoda main():  
-- porneste aplicatia folosind SpringApplication.run()  
-- initializeaza toate componentele (controller, service, repository)  
+ porneste aplicatia folosind SpringApplication.run()  
+ initializeaza toate componentele (controller, service, repository)  
 
 ---
 
