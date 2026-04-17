@@ -100,7 +100,6 @@ Atribute:
  genre: genul filmului  
  score: scorul filmului  
 
-@GeneratedValue(strategy = GenerationType.IDENTITY) genereaza automat id-ul  
  
 
 ---
