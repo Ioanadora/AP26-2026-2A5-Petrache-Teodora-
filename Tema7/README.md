@@ -1,68 +1,174 @@
+## 1. Arhitectura si Structura Proiectului
 
-## Arhitectura Proiectului
+client: trimite request-uri HTTP catre server folosind RestTemplate  
+controller: gestioneaza request-urile HTTP si expune API-ul REST  
+service: contine logica aplicatiei  
+repository: comunica cu baza de date folosind JPA  
+model: defineste structura entitatii Film  
 
-- model: Contine clasa care defineste structura unui film.
-- repository: Contine interfata pentru comunicarea cu baza de date.
-- service: Contine operatiile care se pot face asupra filmelor.
-- controller: Reprezinta punctul de intrare in aplicatie pentru cererile HTTP (web).
-- client: Contine un client de test care simuleaza un utilizator ce apeleaza API-ul.
-- exception: Gestioneaza erorile la nivel global.
- 
-## Detalierea Claselor si a Fisierelor
+---
 
+## 2. Pachetul client
 
-### 1. Lab7tApplication.java
-Aceasta este clasa principala a programului
+### AppConfig.java  
+Configureaza bean-uri pentru aplicatie  
 
- Contine adnotarea @SpringBootApplication, care ii spune platformei Spring sa configureze totul automat.
- In metoda main, apelam SpringApplication.run, care porneste serverul web intern si initializeaza intregul program.
- Dupa pornirea aplicatiei, clasa preia componenta FilmClient dintr-un context Spring si apeleaza metoda runClient(), pentru a rula testele asupra API-ului.
+### Metoda restTemplate()  
+creeaza un obiect RestTemplate  
+foloseste HttpComponentsClientHttpRequestFactory pentru suport complet HTTP (inclusiv PATCH)  
 
-### 2. model/Film.java
-Aceasta clasa reprezinta forma pe care o are un film in memorie si in baza de date.
+---
 
+### FilmClient.java  
+Simuleaza un client care apeleaza API-ul REST  
 
- Adnotarile @Entity si @Table(name = "movies") asigura legatura intre aceasta clasa si o tabela numita "movies" in baza de date.
- Contine campurile specifice: id (care este cheie primara, generata automat gratie lui @Id si @GeneratedValue), title (titlul filmului), genre (genul) si score (nota).
- Avem un constructor gol, necesar pentru Hibernate, si constructori cu parametri.
- Metodele de tip getter si setter sunt folosite pentru a accesa, respectiv a modifica, campurile in mod sigur.
+Implementeaza CommandLineRunner, deci se executa automat la pornirea aplicatiei  
 
-### 3. repository/FilmRepository.java
+### Variabila url  
+contine adresa API-ului (http://localhost:8086/movies)  
 
- Este o interfata si mosteneste JpaRepository.
+### Metoda run()  
+apeleaza metoda runClient()  
 
-### 4. service/FilmService.java
- Aici definim ce sa faca aplicatia cand cineva cere o operatie, inainte de a merge efectiv la baza de date.
+### Metoda runClient()  
 
- Este marcat cu @Service pentru a fi detectat de Spring ca o componenta de business.
- Contine actiunile principale pe care vrem sa le facem: getAll (extrage toate filmele), addFilm (salveaza in baza de date un film), updateFilm (actualizeaza un film intreg), updateScore (actualizeaza doar nota unui film) si deleteFilm (sterge un film dupa id).
- Clasa Service preia, prin constructor, componenta FilmRepository. Folosind acest repository, Service-ul comanda bazei de date sa citeasca sau sa modifice inregistrari.
- Tot in Service gestionez cazurile in care un film cautat nu exista: in caz contrar aruncam o exceptie de tip RuntimeException cu mesajul "Film not found".
+creeaza un film nou  
+trimite POST request folosind restTemplate.postForObject()  
+afiseaza filmul creat  
 
-### 5. controller/FilmController.java
-Acesta este punctul de legatura intre exterior si logica. Prinde cererile de la utilizatori si apeleaza logica din FilmService.
+extrage id-ul filmului  
 
- Adnotarea @RestController transforma clasa intr-un receptor capabil sa lucreze cu pachete JSON. Cu @RequestMapping("/movies") declaram ca orice ruta care incepe cu "/movies" va ajunge aici.
- @GetMapping preia cererea si ruleaza metoda de aducere a tuturor filmelor.
- @PostMapping preia din corpul cererii (@RequestBody) detaliile unui nou film si il construieste.
- @PutMapping si @PatchMapping actualizeaza filme. Put asigura schimbarea unui obiect intreg, pe cand Patch asigura schimbarea unui singur parametru (cum ar fi nota). Parametrul variabil din adresa (cum ar fi un numar de ID) este scos folosind @PathVariable.
- @DeleteMapping permite stergerea din baza de date trimitand ID-ul asociat filmului prin adresa.
+trimite GET request pentru toate filmele  
+foloseste restTemplate.getForObject()  
+afiseaza numarul de filme  
 
-### 6. client/AppConfig.java
-O clasa de configurare destinata pentru partea de client a aplicatiei.
+creeaza un film actualizat  
+trimite PUT request folosind restTemplate.put()  
 
- Clasa este adnotata cu @Configuration, fapt ce indica platformei Spring Boot ca de aici vor fi expuse componente refolosibile.
- Contine o metoda numita restTemplate care returneaza un obiect RestTemplate. Acesta este folosit pentru a apela alte servicii web.
+creeaza un PATCH request  
+foloseste restTemplate.exchange() cu HttpMethod.PATCH  
+actualizeaza scorul filmului  
+afiseaza rezultatul  
 
+trimite DELETE request folosind restTemplate.delete()  
+sterge filmul dupa id  
 
-### 7. client/FilmClient.java
-Rolul acestui fisier este de a testa aplicatia si de a arata cum interactioneaza un client cu sistemul proaspat creat.
+---
 
-1 Aceasta metoda mosteneste CommandLineRunner si va folosi comanda run pentru a se executa automat dupa lansarea aplicatiei, doar pentru a testa operatiile dezvoltate de noi.
-2 Preia adresa de functionare, in cazul nostru localhost, pe portul 8086.
-3 Simuleaza crearea unui nou film trimitand cererile necesare, stocheaza acel film, ii extrage adresa si face niste teste pentru actiunile de tip citire, modificare parametru si stergere film.
-4 Functiile apeland componentele expuse de RestTemplate sunt: postForObject (adauga un nou film), getForObject (aduce informatia din format JSON), put, exchange (folositor aici in mod special pentru cerinta PATCH) si delete (stergere finala pe id-ul gasit).
-5 Toate aceste rezultate le expune automat in consola, validand in fata studentului ca toate instrumentele scrise raspund bine in ansamblu.
+## 3. Pachetul controller
 
+### FilmController.java  
+Expune endpoint-urile REST  
 
+@RequestMapping("/movies") defineste ruta principala  
 
+### Metoda getAll()  
+foloseste @GetMapping  
+returneaza toate filmele  
+
+### Metoda addFilm()  
+foloseste @PostMapping  
+adauga un film nou  
+
+### Metoda updateFilm()  
+foloseste @PutMapping("/{id}")  
+actualizeaza toate campurile filmului  
+
+### Metoda updateScore()  
+foloseste @PatchMapping("/{id}/score")  
+actualizeaza doar scorul  
+
+### Metoda deleteFilm()  
+foloseste @DeleteMapping("/{id}")  
+sterge filmul  
+
+---
+
+## 4. Pachetul service
+
+### FilmService.java  
+Contine logica aplicatiei  
+
+### Metoda getAll()  
+returneaza toate filmele din baza de date  
+
+### Metoda addFilm()  
+salveaza un film  
+
+### Metoda updateFilm()  
+cauta filmul dupa id  
+daca nu exista, arunca RuntimeException  
+actualizeaza toate campurile  
+
+### Metoda updateScore()  
+actualizeaza doar scorul filmului  
+
+### Metoda deleteFilm()  
+sterge filmul dupa id  
+
+---
+
+## 5. Pachetul repository
+
+### FilmRepository.java  
+Extinde JpaRepository  
+
+ofera automat operatii CRUD  
+nu necesita SQL manual  
+
+---
+
+## 6. Pachetul model
+
+### Film.java  
+Reprezinta tabela "movies" din baza de date  
+
+@Entity marcheaza clasa ca entitate  
+@Table(name = "movies") defineste tabelul  
+
+### Atribute  
+id: cheia primara, generata automat  
+title: titlul filmului  
+genre: genul filmului  
+score: scorul filmului  
+
+### Contine  
+constructor fara parametri  
+constructor cu id  
+constructor fara id  
+metode getter si setter  
+
+---
+
+## 7. Clasa principala
+
+### Lab7tApplication.java  
+
+Este punctul de start al aplicatiei  
+
+@SpringBootApplication configureaza aplicatia  
+
+### Metoda main()  
+porneste aplicatia  
+obtine bean-ul FilmClient  
+apeleaza manual metoda runClient()  
+
+---
+
+## 8. Fluxul aplicatiei
+
+1. Aplicatia porneste si initializeaza componentele  
+
+2. FilmClient trimite request-uri HTTP catre API  
+
+3. FilmController primeste request-urile  
+
+4. Controller apeleaza FilmService  
+
+5. Service foloseste FilmRepository pentru acces la baza de date  
+
+6. Datele sunt salvate sau returnate  
+
+7. Raspunsul este trimis inapoi catre client  
+
+8. Clientul afiseaza rezultatele in consola  
