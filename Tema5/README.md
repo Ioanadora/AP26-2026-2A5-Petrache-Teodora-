@@ -3,16 +3,16 @@
 ### 1. Pachetul model
 Acest pachet contine entitatile de date pe care se bazeaza aplicatia. 
 
-Resource.java: Reprezinta o resursa individuala. Clasa implementeaza interfata Serializable pe care o folosim pentru a putea salva datele intr-un fisier. Contine atributele esentiale: un identificator unic (id), un nume (nameResource), locatia fizica sau adresa URL (locationResource) si o colectie de tip dictionar (Map<String, String> properties) pentru a stoca metadate aditionale (cum ar fi anul, autorul sau formatul).
+Resource.java: Clasa implementeaza interfata Serializable pe care o folosim pentru a putea salva datele intr-un fisier. Contine: un identificator unic (id), un nume (nameResource), locatia fizica sau adresa URL (locationResource) si o colectie de tip dictionar (Map<String, String> properties) pentru a stoca metadate aditionale (cum ar fi anul, autorul sau formatul).
 
-Catalog.java: Actioneaza ca o colectie centrala de resurse. Elementele sunt stocate intern utilizand structura de date HashMap<String, Resource>, permitand astfel o cautare si o accesare foarte rapida  a unei resurse utilizand direct ID-ul ei. Are, de asemenea, metode ajutatoare tipice de adaugare si regasire.
+Catalog.java: Actioneaza ca o colectie centrala de resurse. Elementele sunt stocate intern utilizand structura de date HashMap<String, Resource>, permitand astfel o cautare si o accesare foarte rapida  a unei resurse utilizand direct ID-ul ei. Are metode ajutatoare de adaugare si regasire.
 
 ### 2. Pachetul repository
 CatalogRepository.java: Acest pachet are ca responsabilitate implementarea persistentei de durata a catalogului.
 
-Metoda save instantieaza un ObjectOutputStream prin care serializeaza obiectul intreg si il stocheaza direct ca o suma de bytes in partitia locala la calea oferita.
+Metoda save instantieaza un ObjectOutputStream prin care serializeaza obiectul intreg si il stocheaza direct ca o suma de bytes.
 
-Metoda load este reversul. Se bazeaza pe ObjectInputStream pentru a prelua fisierul, a-l deserializa si a returna complet instanta completa a catalogului de date cu resursele setate anterior.
+Metoda load este inversul. Se bazeaza pe ObjectInputStream pentru a prelua fisierul si a returna complet instanta completa a catalogului de date cu resursele setate anterior.
 
 ### 3. Pachetul commands
 Aceasta sectiune implementeaza o arhitectura bazata pe Command Pattern. Logica operatiilor pe care utilizatorul le poate executa se gaseste aici.
