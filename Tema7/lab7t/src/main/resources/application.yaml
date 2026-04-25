@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: lab7t
+
+  datasource:
+    url: jdbc:sqlite:films.db
+    driver-class-name: org.sqlite.JDBC
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8086
