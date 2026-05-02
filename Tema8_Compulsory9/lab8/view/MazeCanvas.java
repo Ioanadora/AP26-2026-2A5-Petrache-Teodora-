@@ -32,30 +32,24 @@ public class MazeCanvas extends Canvas {
 
         double cellW = getWidth() / maze.getCols();
         double cellH = getHeight() / maze.getRows();
-
         double x = col * cellW;
         double y = row * cellH;
-
         double margin = 10;
 
-        // sus
         if (Math.abs(mouseY - y) < margin) {
             c.top = !c.top;
             if (row > 0) maze.getGrid()[row - 1][col].bottom = c.top;
         }
-        // jos
         else if (Math.abs(mouseY - (y + cellH)) < margin) {
             c.bottom = !c.bottom;
             if (row < maze.getRows() - 1)
                 maze.getGrid()[row + 1][col].top = c.bottom;
         }
-        // stanga
         else if (Math.abs(mouseX - x) < margin) {
             c.left = !c.left;
             if (col > 0)
                 maze.getGrid()[row][col - 1].right = c.left;
         }
-        // dreapta
         else if (Math.abs(mouseX - (x + cellW)) < margin) {
             c.right = !c.right;
             if (col < maze.getCols() - 1)
