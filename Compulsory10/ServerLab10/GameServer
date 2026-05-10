@@ -1,0 +1,53 @@
+package com.compulsory10.lab10server;
+
+import java.io.*;
+import java.net.*;
+import java.util.HashMap;
+import java.util.Map;
+
+public class GameServer {
+
+    private boolean running = true;
+
+    private Map<String, Integer> scores = new HashMap<>();
+
+    public static final String QUESTION = "Capitala României?";
+    public static final String ANSWER = "Bucuresti";
+
+    public void start(int port) {
+
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+
+            System.out.println("Server started...");
+
+            while (running) {
+                Socket client = serverSocket.accept();
+                new Thread(new ClientThread(client, this)).start();
+            }
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        running = false;
+        System.out.println("Server stopped");
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public synchronized void addPlayer(String name) {
+        scores.putIfAbsent(name, 0);
+    }
+
+    public synchronized void addScore(String name) {
+        scores.put(name, scores.getOrDefault(name, 0) + 1);
+    }
+
+    public synchronized String getScore(String name) {
+        return name + " score: " + scores.getOrDefault(name, 0);
+    }
+}

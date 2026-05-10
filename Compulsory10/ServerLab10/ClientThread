@@ -1,0 +1,75 @@
+package com.compulsory10.lab10server;
+
+import java.io.*;
+import java.net.Socket;
+
+public class ClientThread implements Runnable {
+
+    private Socket socket;
+    private GameServer server;
+    private String playerName;
+
+    public ClientThread(Socket socket, GameServer server) {
+        this.socket = socket;
+        this.server = server;
+    }
+
+    @Override
+    public void run() {
+
+        try (
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
+        ) {
+
+            String line;
+
+            while ((line = in.readLine()) != null) {
+
+                System.out.println("Client: " + line);
+
+                String[] tokens = line.split(" ");
+
+                switch (tokens[0]) {
+
+                    case "join":
+                        playerName = tokens[1];
+                        server.addPlayer(playerName);
+                        out.println("Welcome " + playerName);
+                        break;
+
+                    case "question":
+                        out.println(GameServer.QUESTION);
+                        break;
+
+                    case "answer":
+                        if (tokens.length > 1 &&
+                                tokens[1].equalsIgnoreCase(GameServer.ANSWER)) {
+
+                            server.addScore(playerName);
+                            out.println("Correct!");
+
+                        } else {
+                            out.println("Wrong answer");
+                        }
+                        break;
+
+                    case "score":
+                        out.println(server.getScore(playerName));
+                        break;
+
+                    case "stop":
+                        out.println("Server stopped");
+                        server.stop();
+                        return;
+
+                    default:
+                        out.println("Unknown command");
+                }
+            }
+
+        } catch (IOException exception) {
+            System.out.println("Client disconnected");
+        }
+    }
+}

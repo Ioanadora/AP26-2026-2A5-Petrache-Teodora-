@@ -1,0 +1,37 @@
+package com.compulsory10.lab10client;
+
+import java.io.*;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class GameClient {
+
+    public static void main(String[] args) {
+
+        try (
+                Socket socket = new Socket("localhost", 1234);
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                Scanner scanner = new Scanner(System.in))
+        {
+
+            System.out.println("Commands: join, question, answer, score, exit");
+            String command;
+
+            while (true) {
+
+                command = scanner.nextLine();
+
+                if (command.equals("exit")) {
+                    break;
+                }
+
+                out.println(command);
+                System.out.println("Server: " + in.readLine());
+            }
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+}
